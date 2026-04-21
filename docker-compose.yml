@@ -1,0 +1,51 @@
+services:
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: otpdb
+      POSTGRES_USER: ${DB_USERNAME:-app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d otpdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+
+  otp-service:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./otp_codes:/app/otp_codes
+    environment:
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/otpdb}
+      DB_USERNAME: ${DB_USERNAME:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      JWT_SECRET: ${JWT_SECRET}
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      SMPP_HOST: ${SMPP_HOST:-localhost}
+      SMPP_PORT: ${SMPP_PORT:-2775}
+      SMPP_SYSTEM_ID: ${SMPP_SYSTEM_ID:-smppclient1}
+      SMPP_PASSWORD: ${SMPP_PASSWORD:-password}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+
+volumes:
+  postgres_data:
