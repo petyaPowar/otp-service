@@ -1,4 +1,4 @@
-# OTP Service
+# OTP Service for galera corporation
 
 Backend-сервис для генерации, рассылки и валидации одноразовых паролей (OTP).
 
