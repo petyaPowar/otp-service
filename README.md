@@ -101,9 +101,8 @@ docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 Веб-интерфейс: http://localhost:8025
 
 ### SMS — SMPPsim
-1. Скачать [SMPPsim](http://www.seleniumsoftware.com/user-guide.htm)
+1. Скачать SMPPsim
 2. Запустить: `java -jar SMPPSim.jar` (порт 2775)
-3. Логин/пароль по умолчанию в `config/smppsim.props`
 
 ### Telegram
 Заполнить `telegram.properties` (см. выше).
